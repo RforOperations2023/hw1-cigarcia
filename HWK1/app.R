@@ -1,4 +1,5 @@
 library(shiny)
+library(shinythemes)
 library(ggplot2)
 library(DT)
 library(stringr)
@@ -47,7 +48,10 @@ housing$month.sold.name <- factor(housing$month.sold.name,
 ui <- fluidPage(
   
   # Application title -----------------------------------------------
-  titlePanel("Miami Housing Market 2016"),
+  titlePanel(h1("Miami Housing Market 2016", align = "center")),
+  
+  # Horizontal line for visual separation -----------------------
+  hr(),
   
   # Sidebar layout with a input and output definitions --------------
   sidebarLayout(
@@ -141,6 +145,8 @@ server <- function(input, output) {
       geom_point(color = "steelblue") +
       scale_y_continuous(labels=function(x) format(x, big.mark = ",", scientific = FALSE)) +
       scale_x_continuous(labels=function(x) format(x, big.mark = ",", scientific = FALSE)) +
+      theme(axis.title = element_text(color = "black", size = 15, face = "bold"),
+            axis.title.y = element_text(face = "bold"))  + 
       labs(x = toTitleCase(str_replace_all(input$x, "\\.", " ")),
            y = toTitleCase(str_replace_all(input$y, "\\.", " "))
       )
