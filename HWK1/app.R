@@ -83,7 +83,7 @@ ui <- fluidPage(
       hr(),      
       
       
-       # Set Age of the property ---------------------------------------------
+       # Set Age of the property ------------------------------------
       sliderInput(inputId = "property.age",
                   label = "Select age of the property:", 
                   min = 0, max = 96, 
@@ -115,14 +115,14 @@ ui <- fluidPage(
     
       ),
       
-        # Show data table ---------------------------------------------
+       # Show data table ---------------------------------------------
         DT::dataTableOutput(outputId = "table")
 
     )
   )
 )
 
-# Define server function required to create the scatterplot ---------
+# Define server function required to create the scatter plot ---------
 server <- function(input, output) {
 
 
@@ -132,7 +132,7 @@ server <- function(input, output) {
   })
   
 
-  # Create scatterplot --
+  # Create scatter plot ----------------------------------------------
   output$scatterplot <- renderPlot({
     ggplot(data = housing.subset(), aes_string(x = input$x, y = input$y)) +
       geom_point(color = "steelblue") +
@@ -144,17 +144,7 @@ server <- function(input, output) {
     }
   )
   
-  # output$scatterplot <- renderPlot({
-  #   ggplot(data = movies_sample(), aes_string(x = input$x, y = input$y,
-  #                                             color = input$z)) +
-  #     geom_point(alpha = input$alpha, size = input$size) +
-  #     labs(x = toTitleCase(str_replace_all(input$x, "_", " ")),
-  #          y = toTitleCase(str_replace_all(input$y, "_", " ")),
-  #          color = toTitleCase(str_replace_all(input$z, "_", " ")),
-  #          title = pretty_plot_title()
-  #     )
-  # 
-  
+  # Create Bar Chart -------------------------------------------------
   output$bar.chart <- renderPlot({
     ggplot(data = housing.subset(), aes(x = month.sold.name)) +
       geom_bar(color = 'lightblue', fill = 'lightblue') +
@@ -169,7 +159,7 @@ server <- function(input, output) {
   }
   )
   
-  # # Create pie chart object the plotOutput function is expecting --
+  # # Create Pie Chart-------------------------------------------------
   output$pie.chart <- renderPlot({
     pie <- housing.subset() %>%
       count(price.range) %>%
@@ -180,11 +170,10 @@ server <- function(input, output) {
       geom_text(aes(x = 1.7, label = scales::percent(percent, accuracy = .1)), position = position_stack(vjust = .6)) +
       coord_polar(theta = "y") +
       theme_void()
-
   }
   )
   
-# Print data table if checked -------------------------------------
+# Print data table------------------------------------------------------
 output$table <- DT::renderDataTable(
   if(input$show_data){
     DT::datatable(data = housing.subset()[0:14], 
@@ -197,7 +186,8 @@ output$table <- DT::renderDataTable(
     
   }
 )
-  
+
+# Download data function------------------------------------------------
 output$download.data <- downloadHandler(
   filename = function() {
     paste("housing.miami", Sys.Date(), ".csv", sep="")
@@ -208,6 +198,6 @@ output$download.data <- downloadHandler(
 )
 } 
 
-# Run the application -----------------------------------------------
+# Run the application --------------------------------------------------
 shinyApp(ui = ui, server = server)
 
