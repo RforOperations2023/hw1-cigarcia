@@ -130,6 +130,8 @@ server <- function(input, output) {
   output$scatterplot <- renderPlot({
     ggplot(data = housing.subset(), aes_string(x = input$x, y = input$y)) +
       geom_point(color = "steelblue") +
+      scale_y_continuous(labels=function(x) format(x, big.mark = ",", scientific = FALSE)) +
+      scale_x_continuous(labels=function(x) format(x, big.mark = ",", scientific = FALSE)) +
       labs(x = toTitleCase(str_replace_all(input$x, "_", " ")),
            y = toTitleCase(str_replace_all(input$y, "_", " ")))
     }
@@ -143,6 +145,7 @@ server <- function(input, output) {
       ylab("Property Count") +
       theme_classic() +
       coord_flip() +
+      geom_text(stat='count', aes(label=..count..), position = position_stack(vjust= 1.03)) + 
       theme(axis.title = element_text(color = "black", size = 15, face = "bold"),
             axis.title.y = element_text(face = "bold")) 
   }
@@ -155,9 +158,9 @@ server <- function(input, output) {
       mutate(percent = n/sum(n))
     ggplot(data = pie, aes(x = "", y = percent, fill = price.range)) +
       geom_bar(position = "fill", width = 1, stat = "identity", color = "white") +
-      scale_fill_brewer("Blues") + 
-      geom_text(aes(x = 1.6, label = scales::percent(percent, accuracy = .1)), position = position_stack(vjust = .5)) +
-      coord_polar(theta = "y")+
+      scale_fill_brewer(palette = "Blues", name = "Price Range") +
+      geom_text(aes(x = 1.7, label = scales::percent(percent, accuracy = .1)), position = position_stack(vjust = .6)) +
+      coord_polar(theta = "y") +
       theme_void()
 
   }
