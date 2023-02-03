@@ -1,0 +1,14 @@
+name: HWK1
+title: HWK1
+username:
+account: cigarcia
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8219239
+bundleId: 6807726
+url: https://cigarcia.shinyapps.io/HWK1/
+when: 1675455029.74678
+lastSyncTime: 1675455029.74678
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .RData
