@@ -132,28 +132,25 @@ server <- function(input, output) {
   # Create scatterplot --
   output$scatterplot <- renderPlot({
     ggplot(data = housing, aes_string(x = input$x, y = input$y)) +
-      geom_point() +
+      geom_point(color = "steelblue") +
       labs(x = toTitleCase(str_replace_all(input$x, "_", " ")),
            y = toTitleCase(str_replace_all(input$y, "_", " ")))
     
     }
   )
-
   
-  # # Create barchart
   output$bar.chart <- renderPlot({
     ggplot(data = housing, aes(x = month.sold.name)) +
-      geom_bar(color = 4, fill = "4") +
+      geom_bar(color = 'lightblue', fill = 'lightblue') +
       ggtitle("Number of Properties Sold per month in year 2016") +
       xlab("Month of Sale") +
       ylab("Property Count") +
       theme_classic() +
-      coord_flip() + 
+      coord_flip() +
       theme(axis.title = element_text(color = "black", size = 15, face = "bold"),
             axis.title.y = element_text(face = "bold")) 
   }
   )
-  
   
   # # Create pie chart object the plotOutput function is expecting --
   output$pie.chart <- renderPlot({
@@ -162,6 +159,7 @@ server <- function(input, output) {
       mutate(percent = n/sum(n))
     ggplot(data = pie, aes(x = "", y = percent, fill = price.range)) +
       geom_bar(position = "fill", width = 1, stat = "identity", color = "white") +
+      scale_fill_brewer("Blues") + 
       geom_text(aes(x = 1.6, label = scales::percent(percent, accuracy = .1)), position = position_stack(vjust = .5)) +
       coord_polar(theta = "y")+
       theme_void()
