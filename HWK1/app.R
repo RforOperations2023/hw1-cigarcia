@@ -4,7 +4,7 @@ library(DT)
 library(stringr)
 library(tools)
 library(dplyr)
-
+library(scales)
 
 #Importing Data
 
@@ -25,7 +25,20 @@ housing$price.range[housing$sale.prc > 500000 & housing$sale.prc <= 1000000] <- 
 housing$price.range[housing$sale.prc > 1000000] <- "More than $1,000,000"
 
 
-#data$month.sold.name <- 
+housing$month.sold.name <- 0
+
+housing$month.sold.name[housing$month.sold == 1] <- "January"
+housing$month.sold.name[housing$month.sold == 2] <- "February"
+housing$month.sold.name[housing$month.sold == 3] <- "March"
+housing$month.sold.name[housing$month.sold == 4] <- "April"
+housing$month.sold.name[housing$month.sold == 5] <- "May"
+housing$month.sold.name[housing$month.sold == 6] <- "June"
+housing$month.sold.name[housing$month.sold == 7] <- "July"
+housing$month.sold.name[housing$month.sold == 8] <- "August"
+housing$month.sold.name[housing$month.sold == 9] <- "September"
+housing$month.sold.name[housing$month.sold == 10] <- "October"
+housing$month.sold.name[housing$month.sold == 11] <- "November"
+housing$month.sold.name[housing$month.sold == 12] <- "December"
 
 # Define UI for application that plots features of movies -----------
 ui <- fluidPage(
@@ -79,7 +92,7 @@ ui <- fluidPage(
       
       
       # Add Download Button
-      downloadButton("downloadData", "Download"),
+      downloadButton("download.data", "Download"),
       h6("Press the download button to save the dataset.")
       
     ),
@@ -94,10 +107,13 @@ ui <- fluidPage(
       tabsetPanel(
         type="tab",
         tabPanel("Market Analysis", plotOutput(outputId = "scatterplot", height = "350px", width = "900px")), #tab for scatter plot
-        #tabPanel("Month Sold Distributrion", plotOutput(outputId = "bar.chart",  height = "350px", width = "900px")), #tab for bar chart
+        tabPanel("Month Sold Distributrion", plotOutput(outputId = "bar.chart",  height = "350px", width = "900px")), #tab for bar chart
         tabPanel("Price Range Distributrion", plotOutput(outputId = "pie.chart",  height = "350px", width = "900px")) #tab for pie chart
     
-    ),
+      ),
+      
+        # Show data table ---------------------------------------------
+        DT::dataTableOutput(outputId = "table")
 
     )
   )
@@ -122,6 +138,22 @@ server <- function(input, output) {
     
     }
   )
+
+  
+  # # Create barchart
+  output$bar.chart <- renderPlot({
+    ggplot(data = housing, aes(x = month.sold.name)) +
+      geom_bar(color = 4, fill = "4") +
+      ggtitle("Number of Properties Sold per month in year 2016") +
+      xlab("Month of Sale") +
+      ylab("Property Count") +
+      theme_classic() +
+      coord_flip() + 
+      theme(axis.title = element_text(color = "black", size = 15, face = "bold"),
+            axis.title.y = element_text(face = "bold")) 
+  }
+  )
+  
   
   # # Create pie chart object the plotOutput function is expecting --
   output$pie.chart <- renderPlot({
@@ -137,21 +169,24 @@ server <- function(input, output) {
   }
   )
   
-  # # Create barchart
-  # output$bar.chart <- renderPlot({
-  #   bar.data <- housing.subset() %>%
-  #     count(month.sold) %>%
-  #     mutate(new = sum(n))
-  #   ggplot(data = bar.data, aes(x = "" , y = count, fill = month.sold)) +
-  #     ggtitle("Number of Properties Sold per month") +
-  #     xlab("Month of Sale") +
-  #     ylab("Property Count") + 
-  #     theme_classic() + 
-  #     geom_bar(position = "fill", stat ="identity", color = "blue") + coord_flip()
-  # }
-  # )
-}  
+# Print data table if checked -------------------------------------
+output$table <- DT::renderDataTable(
+  if(input$show_data){
+    DT::datatable(data = housing[0:14], 
+                  options = list(pageLength = 10), 
+                  rownames = FALSE)
+  }
+)
 
+output$download.data <- downloadHandler(
+  filename = function() {
+    paste("housing.miami", Sys.Date(), ".csv", sep="")
+  },
+  content = function(file) {
+    write.csv(housing, file)
+  }
+)
+} 
 
 # Run the application -----------------------------------------------
 shinyApp(ui = ui, server = server)
