@@ -40,6 +40,9 @@ housing$month.sold.name[housing$month.sold == 10] <- "October"
 housing$month.sold.name[housing$month.sold == 11] <- "November"
 housing$month.sold.name[housing$month.sold == 12] <- "December"
 
+housing$month.sold.name <- factor(housing$month.sold.name, 
+                                   levels= rev(c("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")))
+
 # Define UI for application that plots features of movies -----------
 ui <- fluidPage(
   
@@ -138,8 +141,8 @@ server <- function(input, output) {
       geom_point(color = "steelblue") +
       scale_y_continuous(labels=function(x) format(x, big.mark = ",", scientific = FALSE)) +
       scale_x_continuous(labels=function(x) format(x, big.mark = ",", scientific = FALSE)) +
-      labs(x = toTitleCase(str_replace_all(input$x, "_", " ")),
-           y = toTitleCase(str_replace_all(input$y, "_", " "))
+      labs(x = toTitleCase(str_replace_all(input$x, "\\.", " ")),
+           y = toTitleCase(str_replace_all(input$y, "\\.", " "))
       )
     }
   )
@@ -182,7 +185,8 @@ output$table <- DT::renderDataTable(
                   colnames = c('latitude' = 'lat', 'longitude' = 'long', 'parcel no' = 'parcel.no', 'sale price' = 'sale.prc', 
                   'land area' = 'lnd.sqft', 'floor area' = 'tot.lvg.area', 'special features value' = 'spec.feat.val', 
                   'rail dist' = 'rail.dist', 'ocean dist' = 'ocean.dist', 'water dist' = 'water.dist', 'business center dist' = 'cntr.dist',
-                  'sub-center dist' = 'subcntr.di', 'highway dist' = 'hw.dist', 'property age' = 'age'))
+                  'sub-center dist' = 'subcntr.di', 'highway dist' = 'hw.dist', 'property age' = 'age'))  %>% 
+   formatCurrency('sale price', "$")
     
   }
 )
