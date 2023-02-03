@@ -57,7 +57,7 @@ ui <- fluidPage(
       
       # Select variable for y-axis ----------------------------------
       selectInput(inputId = "y", 
-                  label = "Y-axis:",
+                  label = "Market Analysis Y-axis:",
                   choices = c("Sale price" = "sale.prc", 
                               "Land area (sqft)" = "lnd.sqft", 
                               "Floor area (sqft)" = "tot.lvg.area", 
@@ -70,7 +70,7 @@ ui <- fluidPage(
       
       # Select variable for x-axis ----------------------------------
       selectInput(inputId = "x", 
-                  label = "X-axis:",
+                  label = "Market Analysis X-axis:",
                   choices = c("Sale price" = "sale.prc", 
                   "Land area (sqft)" = "lnd.sqft", 
                   "Floor area (sqft)" = "tot.lvg.area", 
@@ -88,7 +88,7 @@ ui <- fluidPage(
       
        # Set Age of the property ------------------------------------
       sliderInput(inputId = "property.age",
-                  label = "Select age of the property:", 
+                  label = "Select age of the property for all graphs and table:", 
                   min = 0, max = 96, 
                   value = c(0, 10)),
       
@@ -186,8 +186,11 @@ output$table <- DT::renderDataTable(
                   'land area' = 'lnd.sqft', 'floor area' = 'tot.lvg.area', 'special features value' = 'spec.feat.val', 
                   'rail dist' = 'rail.dist', 'ocean dist' = 'ocean.dist', 'water dist' = 'water.dist', 'business center dist' = 'cntr.dist',
                   'sub-center dist' = 'subcntr.di', 'highway dist' = 'hw.dist', 'property age' = 'age'))  %>% 
-   formatCurrency('sale price', "$")
-    
+   formatCurrency('sale price', "$") %>% 
+   formatCurrency(c('land area', 'floor area','special features value','rail dist','ocean dist','water dist', 
+                    'business center dist', 'sub-center dist', 'highway dist'), "")%>% 
+   formatRound(c('land area', 'floor area','special features value','rail dist','ocean dist','water dist', 
+                 'business center dist', 'sub-center dist', 'highway dist'), 1)
   }
 )
 
