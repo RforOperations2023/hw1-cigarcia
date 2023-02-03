@@ -98,8 +98,6 @@ ui <- fluidPage(
     ),
     
     
-    
-    
     # Output --------------------------------------------------------
     mainPanel(
       
@@ -122,25 +120,23 @@ ui <- fluidPage(
 # Define server function required to create the scatterplot ---------
 server <- function(input, output) {
 
-  # 
-  # housing.subset <- reactive({
-  #   req(input$property.age) # ensure availablity of value before proceeding
-  #   filter(housing, age %in% input$property.age)
-  # })
-  # 
+
+  housing.subset <- reactive({
+    req(input$property.age) # ensure availablity of value before proceeding
+    filter(housing, age %in% input$property.age)
+  })
 
   # Create scatterplot --
   output$scatterplot <- renderPlot({
-    ggplot(data = housing, aes_string(x = input$x, y = input$y)) +
+    ggplot(data = housing.subset(), aes_string(x = input$x, y = input$y)) +
       geom_point(color = "steelblue") +
       labs(x = toTitleCase(str_replace_all(input$x, "_", " ")),
            y = toTitleCase(str_replace_all(input$y, "_", " ")))
-    
     }
   )
   
   output$bar.chart <- renderPlot({
-    ggplot(data = housing, aes(x = month.sold.name)) +
+    ggplot(data = housing.subset(), aes(x = month.sold.name)) +
       geom_bar(color = 'lightblue', fill = 'lightblue') +
       ggtitle("Number of Properties Sold per month in year 2016") +
       xlab("Month of Sale") +
@@ -154,7 +150,7 @@ server <- function(input, output) {
   
   # # Create pie chart object the plotOutput function is expecting --
   output$pie.chart <- renderPlot({
-    pie <- housing %>%
+    pie <- housing.subset() %>%
       count(price.range) %>%
       mutate(percent = n/sum(n))
     ggplot(data = pie, aes(x = "", y = percent, fill = price.range)) +
