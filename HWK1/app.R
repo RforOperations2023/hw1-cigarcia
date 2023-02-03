@@ -78,7 +78,12 @@ ui <- fluidPage(
                   "Distance to the highway" = "hw.dist"), 
                   selected = "lnd.sqft"),
     
-      # Set Age of the property ---------------------------------------------
+     
+      # Horizontal line for visual separation -----------------------
+      hr(),      
+      
+      
+       # Set Age of the property ---------------------------------------------
       sliderInput(inputId = "property.age",
                   label = "Select age of the property:", 
                   min = 0, max = 96, 
@@ -122,9 +127,10 @@ server <- function(input, output) {
 
 
   housing.subset <- reactive({
-    req(input$property.age) # ensure availablity of value before proceeding
-    filter(housing, age %in% input$property.age)
+    req(input$property.age) # ensure availability of value before proceeding
+    filter(housing, age >= input$property.age[1] & age <= input$property.age[2])
   })
+  
 
   # Create scatterplot --
   output$scatterplot <- renderPlot({
@@ -133,9 +139,21 @@ server <- function(input, output) {
       scale_y_continuous(labels=function(x) format(x, big.mark = ",", scientific = FALSE)) +
       scale_x_continuous(labels=function(x) format(x, big.mark = ",", scientific = FALSE)) +
       labs(x = toTitleCase(str_replace_all(input$x, "_", " ")),
-           y = toTitleCase(str_replace_all(input$y, "_", " ")))
+           y = toTitleCase(str_replace_all(input$y, "_", " "))
+      )
     }
   )
+  
+  # output$scatterplot <- renderPlot({
+  #   ggplot(data = movies_sample(), aes_string(x = input$x, y = input$y,
+  #                                             color = input$z)) +
+  #     geom_point(alpha = input$alpha, size = input$size) +
+  #     labs(x = toTitleCase(str_replace_all(input$x, "_", " ")),
+  #          y = toTitleCase(str_replace_all(input$y, "_", " ")),
+  #          color = toTitleCase(str_replace_all(input$z, "_", " ")),
+  #          title = pretty_plot_title()
+  #     )
+  # 
   
   output$bar.chart <- renderPlot({
     ggplot(data = housing.subset(), aes(x = month.sold.name)) +
@@ -169,18 +187,23 @@ server <- function(input, output) {
 # Print data table if checked -------------------------------------
 output$table <- DT::renderDataTable(
   if(input$show_data){
-    DT::datatable(data = housing[0:14], 
+    DT::datatable(data = housing.subset()[0:14], 
                   options = list(pageLength = 20), 
-                  rownames = FALSE)
+                  rownames = FALSE,
+                  colnames = c('latitude' = 'lat', 'longitude' = 'long', 'parcel no' = 'parcel.no', 'sale price' = 'sale.prc', 
+                  'land area' = 'lnd.sqft', 'floor area' = 'tot.lvg.area', 'special features value' = 'spec.feat.val', 
+                  'rail dist' = 'rail.dist', 'ocean dist' = 'ocean.dist', 'water dist' = 'water.dist', 'business center dist' = 'cntr.dist',
+                  'sub-center dist' = 'subcntr.di', 'highway dist' = 'hw.dist', 'property age' = 'age'))
+    
   }
 )
-
+  
 output$download.data <- downloadHandler(
   filename = function() {
     paste("housing.miami", Sys.Date(), ".csv", sep="")
   },
   content = function(file) {
-    write.csv(housing, file)
+    write.csv(housing.subset(), file)
   }
 )
 } 
