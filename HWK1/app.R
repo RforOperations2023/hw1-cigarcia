@@ -55,27 +55,27 @@ ui <- fluidPage(
       # Select variable for y-axis ----------------------------------
       selectInput(inputId = "y", 
                   label = "Y-axis:",
-                  choices = c("Sale Price" = "sale.prc", 
+                  choices = c("Sale price" = "sale.prc", 
                               "Land area (sqft)" = "lnd.sqft", 
-                              "Floor Area (sq ft)" = "tot.lvg.area", 
-                              "Value of Special Features" = "spec.feat.val", 
-                              "Distance to the Ocean" = "ocean.dist", 
+                              "Floor area (sqft)" = "tot.lvg.area", 
+                              "Value of special features" = "spec.feat.val", 
+                              "Distance to the ocean" = "ocean.dist", 
                               "Distance to nearest water body" = "water.dist",
-                              "Distance to Business Dist." = "cntr.dist", 
-                              "Distance to the Highway" = "hw.dist"), 
+                              "Distance to business dist." = "cntr.dist", 
+                              "Distance to the highway" = "hw.dist"), 
                   selected = "sale.prc"),
       
       # Select variable for x-axis ----------------------------------
       selectInput(inputId = "x", 
                   label = "X-axis:",
-                  choices = c("Sale Price" = "sale.prc", 
+                  choices = c("Sale price" = "sale.prc", 
                   "Land area (sqft)" = "lnd.sqft", 
-                  "Floor Area (sq ft)" = "tot.lvg.area", 
-                  "Value of Special Features" = "spec.feat.val", 
-                  "Distance to the Ocean" = "ocean.dist", 
+                  "Floor area (sqft)" = "tot.lvg.area", 
+                  "Value of special features" = "spec.feat.val", 
+                  "Distance to the ocean" = "ocean.dist", 
                   "Distance to nearest water body" = "water.dist",
-                  "Distance to Business Dist." = "cntr.dist", 
-                  "Distance to the Highway" = "hw.dist"), 
+                  "Distance to business dist." = "cntr.dist", 
+                  "Distance to the highway" = "hw.dist"), 
                   selected = "lnd.sqft"),
     
       # Set Age of the property ---------------------------------------------
@@ -105,8 +105,8 @@ ui <- fluidPage(
       tabsetPanel(
         type="tab",
         tabPanel("Market Analysis", plotOutput(outputId = "scatterplot", height = "350px", width = "900px")), #tab for scatter plot
-        tabPanel("Month Sold Distributrion", plotOutput(outputId = "bar.chart",  height = "350px", width = "900px")), #tab for bar chart
-        tabPanel("Price Range Distributrion", plotOutput(outputId = "pie.chart",  height = "350px", width = "900px")) #tab for pie chart
+        tabPanel("Month Sold Distribution", plotOutput(outputId = "bar.chart",  height = "350px", width = "900px")), #tab for bar chart
+        tabPanel("Sale Price Distribution", plotOutput(outputId = "pie.chart",  height = "350px", width = "900px")) #tab for pie chart
     
       ),
       
@@ -138,7 +138,7 @@ server <- function(input, output) {
   output$bar.chart <- renderPlot({
     ggplot(data = housing.subset(), aes(x = month.sold.name)) +
       geom_bar(color = 'lightblue', fill = 'lightblue') +
-      ggtitle("Number of Properties Sold per month in year 2016") +
+      ggtitle("Number of properties sold per month in 2016") +
       xlab("Month of Sale") +
       ylab("Property Count") +
       theme_classic() +
@@ -167,7 +167,7 @@ server <- function(input, output) {
 output$table <- DT::renderDataTable(
   if(input$show_data){
     DT::datatable(data = housing[0:14], 
-                  options = list(pageLength = 10), 
+                  options = list(pageLength = 20), 
                   rownames = FALSE)
   }
 )
